@@ -8,6 +8,8 @@ class DefaultControllerTest extends WebTestCase
 {
     public function testIndex()
     {
+
+        //test commit 2
         $client = static::createClient();
 
         $crawler = $client->request('GET', '/');
