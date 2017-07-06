@@ -50,7 +50,7 @@ class EsiTest extends TestCase
     {
         $esi = new Esi();
 
-        $response = new Response('foo <esi:include src="" />');
+        $response = new Response('foo <ESI:include src="" />');
         $esi->addSurrogateControl($response);
         $this->assertEquals('content="ESI/1.0"', $response->headers->get('Surrogate-Control'));
 
@@ -75,10 +75,10 @@ class EsiTest extends TestCase
     {
         $esi = new Esi();
 
-        $this->assertEquals('<esi:include src="/" onerror="continue" alt="/alt" />', $esi->renderIncludeTag('/', '/alt', true));
-        $this->assertEquals('<esi:include src="/" alt="/alt" />', $esi->renderIncludeTag('/', '/alt', false));
-        $this->assertEquals('<esi:include src="/" onerror="continue" />', $esi->renderIncludeTag('/'));
-        $this->assertEquals('<esi:comment text="some comment" />'."\n".'<esi:include src="/" onerror="continue" alt="/alt" />', $esi->renderIncludeTag('/', '/alt', true, 'some comment'));
+        $this->assertEquals('<ESI:include src="/" onerror="continue" alt="/alt" />', $esi->renderIncludeTag('/', '/alt', true));
+        $this->assertEquals('<ESI:include src="/" alt="/alt" />', $esi->renderIncludeTag('/', '/alt', false));
+        $this->assertEquals('<ESI:include src="/" onerror="continue" />', $esi->renderIncludeTag('/'));
+        $this->assertEquals('<ESI:comment text="some comment" />'."\n".'<ESI:include src="/" onerror="continue" alt="/alt" />', $esi->renderIncludeTag('/', '/alt', true, 'some comment'));
     }
 
     public function testProcessDoesNothingIfContentTypeIsNotHtml()
@@ -98,7 +98,7 @@ class EsiTest extends TestCase
         $esi = new Esi();
 
         $request = Request::create('/');
-        $response = new Response('<esi:remove> <a href="http://www.example.com">www.example.com</a> </esi:remove> Keep this'."<esi:remove>\n <a>www.example.com</a> </esi:remove> And this");
+        $response = new Response('<ESI:remove> <a href="http://www.example.com">www.example.com</a> </ESI:remove> Keep this'."<ESI:remove>\n <a>www.example.com</a> </ESI:remove> And this");
         $esi->process($request, $response);
 
         $this->assertEquals(' Keep this And this', $response->getContent());
@@ -109,7 +109,7 @@ class EsiTest extends TestCase
         $esi = new Esi();
 
         $request = Request::create('/');
-        $response = new Response('<esi:comment text="some comment &gt;" /> Keep this');
+        $response = new Response('<ESI:comment text="some comment &gt;" /> Keep this');
         $esi->process($request, $response);
 
         $this->assertEquals(' Keep this', $response->getContent());
@@ -120,23 +120,23 @@ class EsiTest extends TestCase
         $esi = new Esi();
 
         $request = Request::create('/');
-        $response = new Response('foo <esi:comment text="some comment" /><esi:include src="..." alt="alt" onerror="continue" />');
+        $response = new Response('foo <ESI:comment text="some comment" /><ESI:include src="..." alt="alt" onerror="continue" />');
         $esi->process($request, $response);
 
         $this->assertEquals('foo <?php echo $this->surrogate->handle($this, \'...\', \'alt\', true) ?>'."\n", $response->getContent());
         $this->assertEquals('ESI', $response->headers->get('x-body-eval'));
 
-        $response = new Response('foo <esi:comment text="some comment" /><esi:include src="foo\'" alt="bar\'" onerror="continue" />');
+        $response = new Response('foo <ESI:comment text="some comment" /><ESI:include src="foo\'" alt="bar\'" onerror="continue" />');
         $esi->process($request, $response);
 
         $this->assertEquals('foo <?php echo $this->surrogate->handle($this, \'foo\\\'\', \'bar\\\'\', true) ?>'."\n", $response->getContent());
 
-        $response = new Response('foo <esi:include src="..." />');
+        $response = new Response('foo <ESI:include src="..." />');
         $esi->process($request, $response);
 
         $this->assertEquals('foo <?php echo $this->surrogate->handle($this, \'...\', \'\', false) ?>'."\n", $response->getContent());
 
-        $response = new Response('foo <esi:include src="..."></esi:include>');
+        $response = new Response('foo <ESI:include src="..."></ESI:include>');
         $esi->process($request, $response);
 
         $this->assertEquals('foo <?php echo $this->surrogate->handle($this, \'...\', \'\', false) ?>'."\n", $response->getContent());
@@ -161,7 +161,7 @@ class EsiTest extends TestCase
         $esi = new Esi();
 
         $request = Request::create('/');
-        $response = new Response('foo <esi:include />');
+        $response = new Response('foo <ESI:include />');
         $esi->process($request, $response);
     }
 
@@ -170,7 +170,7 @@ class EsiTest extends TestCase
         $esi = new Esi();
 
         $request = Request::create('/');
-        $response = new Response('foo <esi:include src="..." />');
+        $response = new Response('foo <ESI:include src="..." />');
         $response->headers->set('Surrogate-Control', 'content="ESI/1.0"');
         $esi->process($request, $response);
         $this->assertEquals('ESI', $response->headers->get('x-body-eval'));

@@ -131,7 +131,7 @@ abstract class FrameworkExtensionTest extends TestCase
     {
         $container = $this->createContainerFromFile('full');
 
-        $this->assertTrue($container->hasDefinition('esi'), '->registerEsiConfiguration() loads esi.xml');
+        $this->assertTrue($container->hasDefinition('ESI'), '->registerEsiConfiguration() loads ESI.xml');
     }
 
     public function testEnabledProfiler()

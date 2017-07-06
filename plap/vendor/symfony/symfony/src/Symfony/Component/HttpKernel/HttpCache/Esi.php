@@ -29,7 +29,7 @@ class Esi extends AbstractSurrogate
 {
     public function getName()
     {
-        return 'esi';
+        return 'ESI';
     }
 
     /**
@@ -37,7 +37,7 @@ class Esi extends AbstractSurrogate
      */
     public function addSurrogateControl(Response $response)
     {
-        if (false !== strpos($response->getContent(), '<esi:include')) {
+        if (false !== strpos($response->getContent(), '<ESI:include')) {
             $response->headers->set('Surrogate-Control', 'content="ESI/1.0"');
         }
     }
@@ -47,14 +47,14 @@ class Esi extends AbstractSurrogate
      */
     public function renderIncludeTag($uri, $alt = null, $ignoreErrors = true, $comment = '')
     {
-        $html = sprintf('<esi:include src="%s"%s%s />',
+        $html = sprintf('<ESI:include src="%s"%s%s />',
             $uri,
             $ignoreErrors ? ' onerror="continue"' : '',
             $alt ? sprintf(' alt="%s"', $alt) : ''
         );
 
         if (!empty($comment)) {
-            return sprintf("<esi:comment text=\"%s\" />\n%s", $comment, $html);
+            return sprintf("<ESI:comment text=\"%s\" />\n%s", $comment, $html);
         }
 
         return $html;
@@ -77,10 +77,10 @@ class Esi extends AbstractSurrogate
 
         // we don't use a proper XML parser here as we can have ESI tags in a plain text response
         $content = $response->getContent();
-        $content = preg_replace('#<esi\:remove>.*?</esi\:remove>#s', '', $content);
-        $content = preg_replace('#<esi\:comment[^>]+>#s', '', $content);
+        $content = preg_replace('#<ESI\:remove>.*?</ESI\:remove>#s', '', $content);
+        $content = preg_replace('#<ESI\:comment[^>]+>#s', '', $content);
 
-        $chunks = preg_split('#<esi\:include\s+(.*?)\s*(?:/|</esi\:include)>#', $content, -1, PREG_SPLIT_DELIM_CAPTURE);
+        $chunks = preg_split('#<ESI\:include\s+(.*?)\s*(?:/|</ESI\:include)>#', $content, -1, PREG_SPLIT_DELIM_CAPTURE);
         $chunks[0] = str_replace($this->phpEscapeMap[0], $this->phpEscapeMap[1], $chunks[0]);
 
         $i = 1;

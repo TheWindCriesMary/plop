@@ -234,7 +234,7 @@ class ConfigurationTest extends TestCase
                     'field_name' => '_token',
                 ),
             ),
-            'esi' => array('enabled' => false),
+            'ESI' => array('enabled' => false),
             'ssi' => array('enabled' => false),
             'fragments' => array(
                 'enabled' => false,

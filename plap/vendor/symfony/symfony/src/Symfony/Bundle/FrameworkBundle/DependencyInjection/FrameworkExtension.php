@@ -209,7 +209,7 @@ class FrameworkExtension extends Extension
         }
 
         $this->registerValidationConfiguration($config['validation'], $container, $loader);
-        $this->registerEsiConfiguration($config['esi'], $container, $loader);
+        $this->registerEsiConfiguration($config['ESI'], $container, $loader);
         $this->registerSsiConfiguration($config['ssi'], $container, $loader);
         $this->registerFragmentsConfiguration($config['fragments'], $container, $loader);
         $this->registerTranslatorConfiguration($config['translator'], $container, $loader);
@@ -381,7 +381,7 @@ class FrameworkExtension extends Extension
             return;
         }
 
-        $loader->load('esi.xml');
+        $loader->load('ESI.xml');
     }
 
     /**

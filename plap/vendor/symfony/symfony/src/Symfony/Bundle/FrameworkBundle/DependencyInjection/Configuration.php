@@ -173,8 +173,8 @@ class Configuration implements ConfigurationInterface
     {
         $rootNode
             ->children()
-                ->arrayNode('esi')
-                    ->info('esi configuration')
+                ->arrayNode('ESI')
+                    ->info('ESI configuration')
                     ->canBeEnabled()
                 ->end()
             ->end()

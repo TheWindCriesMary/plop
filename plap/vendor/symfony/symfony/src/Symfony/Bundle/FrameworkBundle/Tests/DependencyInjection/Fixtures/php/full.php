@@ -10,7 +10,7 @@ $container->loadFromExtension('framework', array(
         ),
     ),
     'http_method_override' => false,
-    'esi' => array(
+    'ESI' => array(
         'enabled' => true,
     ),
     'profiler' => array(

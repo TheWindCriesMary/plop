@@ -23,6 +23,6 @@ class EsiFragmentRenderer extends AbstractSurrogateFragmentRenderer
      */
     public function getName()
     {
-        return 'esi';
+        return 'ESI';
     }
 }
