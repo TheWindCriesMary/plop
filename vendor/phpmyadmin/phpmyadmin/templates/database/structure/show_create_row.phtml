@@ -1,0 +1,20 @@
+<?php use PMA\libraries\Core; ?>
+<fieldset>
+    <legend><?= $title; ?></legend>
+    <table class="show_create">
+        <thead>
+        <tr>
+            <th><?= $raw_title; ?></th>
+            <th>Create <?= $raw_title; ?></th>
+        </tr>
+        </thead>
+        <tbody>
+        <?php foreach ($db_objects as $object): ?>
+            <tr>
+                <td><strong><?= Core::mimeDefaultFunction($object); ?></strong></td>
+                <td><?= Core::mimeDefaultFunction($GLOBALS['dbi']->getTable($db, $object)->showCreate()); ?></td>
+            </tr>
+        <?php endforeach; ?>
+        </tbody>
+    </table>
+</fieldset>
