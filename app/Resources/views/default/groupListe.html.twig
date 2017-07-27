@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+
+{% for group in groups %}
+    * {{ group.name }} <a href="{{ path('groupRemove', { 'id' : group.id } ) }}">Supprimer</a> <br>
+{% else %}
+    Pas de groupe.
+{% endfor %}
+
+{{ form_start(form) }}
+{{ form_widget(form) }}
+{{ form_end(form) }}
+
+</body>
+</html>
