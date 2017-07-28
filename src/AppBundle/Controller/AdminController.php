@@ -9,7 +9,11 @@
 namespace AppBundle\Controller;
 
 
+use AppBundle\CCP\CCPConfig;
 use AppBundle\Entity\Groupe;
+use AppBundle\Entity\User;
+use nullx27\ESI\Api\CorporationApi;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -76,6 +80,88 @@ class AdminController extends Controller
 
 
     }
+
+    /**
+     * @Route("/admin/member/{id}", name="member")
+     */
+    public function adminMemberAction(Request $request, $id)
+    {
+
+
+
+
+        $doctrine = $this->getDoctrine();
+        $rep = $doctrine->getRepository(User::class);
+
+        $user = $rep->find($id);
+
+        $rep = $this->getDoctrine()->getRepository(Groupe::class);
+
+        $groups = $rep->findAll();
+
+
+        //TODO set the selected group (select="selected")
+
+        $userForm = new User();
+        $groupForm = $this->createFormBuilder($userForm)
+            ->add('Groupe', EntityType::class, array(
+                'class' => 'AppBundle:Groupe',
+                'choice_label' => 'name',
+            ))
+            ->add('save', SubmitType::class, array('label' => 'Changer groupe'))
+            ->getForm();
+
+
+        $groupForm->handleRequest($request);
+
+        if ($groupForm->isSubmitted() && $groupForm->isValid()) {
+            $user->setGroupe( $groupForm->getData()->getGroupe());
+
+            $doctrine->getManager()->persist($user);
+            $doctrine->getManager()->flush();
+        }
+
+
+        return $this->render('admin/member.html.twig', [
+            'base_dir' => realpath($this->getParameter('kernel.project_dir')).DIRECTORY_SEPARATOR,
+            'member' => $user,
+            'group_form' => $groupForm->createView(),
+        ]);
+
+
+    }
+
+    /**
+     * @Route("/admin/members", name="members")
+     */
+    public function adminMemberListAction(Request $request)
+    {
+        $corpAPI = new CorporationApi();
+
+        $rep = $this->getDoctrine()->getRepository(User::class);
+
+
+
+        $users = null;
+        $users = $rep->findAll();
+
+        foreach ($users as $user){
+
+            $corp = $corpAPI->getCorporationsCorporationId($user->getCorpId(), CCPConfig::$datasource);
+
+            $user->corp = $corp;
+        }
+
+
+        return $this->render('admin/members.html.twig', [
+            'base_dir' => realpath($this->getParameter('kernel.project_dir')).DIRECTORY_SEPARATOR,
+            'members' => $users,
+        ]);
+
+        //die('members');
+
+    }
+
 
 
 }

@@ -3,6 +3,7 @@
 namespace AppBundle\Controller;
 
 use AppBundle\CCP\CCPUtil;
+use AppBundle\Util\Core;
 use AppBundle\Util\UserUtil;
 use nullx27\ESI\Api\CharacterApi;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -122,16 +123,38 @@ class DefaultController extends Controller
         return $this->redirect('profile');
     }
 
+    /**
+     * @Route("/logout", name="logout")
+     */
+    public function logoutAction(Request $request)
+    {
+
+        $parameters = Core::getDefaultParameter($this->getDoctrine(), $request);
+        $parameters['base_dir'] = realpath($this->getParameter('kernel.project_dir')).DIRECTORY_SEPARATOR;
+
+        if($request->getSession()){
+            $request->getSession()->clear();
+            $request->getSession()->invalidate(0);
+        }
+        //
+
+        return $this->redirect('/');
+    }
+
 
     /**
      * @Route("/", name="homepage")
      */
     public function indexAction(Request $request)
     {
-        // replace this example code with whatever you need
-        return $this->render('default/index.html.twig', [
-            'base_dir' => realpath($this->getParameter('kernel.project_dir')).DIRECTORY_SEPARATOR,
-        ]);
+
+        $parameters = Core::getDefaultParameter($this->getDoctrine(), $request);
+        $parameters['base_dir'] = realpath($this->getParameter('kernel.project_dir')).DIRECTORY_SEPARATOR;
+
+
+
+        return $this->render('default/index.html.twig', $parameters);
+        //
     }
 
     /**

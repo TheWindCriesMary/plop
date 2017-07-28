@@ -30,7 +30,7 @@ class Groupe
     private $name;
 
     /**
-     * @ORM\OneToMany(targetEntity="User", mappedBy="Groupe")
+     * @ORM\OneToMany(targetEntity="User", mappedBy="groupe")
      */
     private $users;
 
@@ -106,5 +106,9 @@ class Groupe
     public function getUsers()
     {
         return $this->users;
+    }
+
+    public function __toString() {
+        return $this->id.'';
     }
 }

@@ -1,0 +1,18 @@
+
+
+<br>
+
+<h1> Menu Here</h1>
+
+<a href="{{ path('homepage') }}"> Accueil </a>
+
+
+<br>
+{% if user is defined %}
+    <a href="{{ path('logout') }}" >Logout</a>
+{% else %}
+    <a href="{{ path('login') }}" >Login</a>
+{% endif %}
+
+
+<br>

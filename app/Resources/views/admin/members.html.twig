@@ -1,0 +1,25 @@
+
+
+{% extends 'template/base.html.twig' %}
+
+
+{% block body %}
+
+<table>
+    <tr> <td> Nom </td> <td> Groupe </td> <td> Corporation </td> </tr>
+    {% for member in members %}
+    <tr>
+        <td><a href="{{ path('member', { 'id' : member.getId() } ) }}"> {{ member.getName()}} </a>  </td>
+
+        <td>{{member.getGroupe().getName()}}  </td>
+
+        <td>{{ member.corp.getCorporationName()}}  </td>
+
+    </tr>
+    {% else %}
+        Pas de membres.
+    {% endfor %}
+</table>
+
+
+{% endblock %}

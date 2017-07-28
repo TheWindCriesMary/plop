@@ -75,16 +75,27 @@ class CCPUtil
         $result = curl_exec($ch);
         if ($result === false) {
             //TODO erreur management
+            return false;
         }
 
         curl_close($ch);
         $response = json_decode($result, true);
         if (isset($response['error'])) {
-            die("\nccpCallBack CCP Error");
+            //die("CCPUtil::updateToken) -> CCP Error"); //TODO better error management
+
+
+            echo 'lel' . $result;
+            return false;
         }
+
+
         $access_token = $response['access_token'];
         $refresh_token = $response['refresh_token'];
 
+        $session->set('token', $access_token);
+        $session->set('refresh_token', $refresh_token);
+
+        return true;
         /*echo 'refreshing token <br>';
         echo 'token : ' . $access_token;
         echo 'refresh_token : ' . $refresh_token;*/

@@ -3,6 +3,7 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use nullx27\ESI\Models\GetCorporationsCorporationIdOk;
 
 /**
  * user
@@ -46,9 +47,16 @@ class User
      * @var int
      *
      * @ORM\ManyToOne(targetEntity="Groupe", inversedBy="users")
-     * @ORM\Column(name="groupe_id", type="integer", nullable=true)
+     * @ORM\JoinColumn(nullable=false)
      */
+
     private $groupe;
+
+    /**
+     * @var GetCorporationsCorporationIdOk
+     */
+    public $corp;
+
 
 
     /**
@@ -155,5 +163,9 @@ class User
     public function getGroupe()
     {
         return $this->groupe;
+    }
+
+    public function __toString() {
+        return $this->id.'';
     }
 }
