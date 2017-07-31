@@ -25,10 +25,15 @@ class AdminController extends Controller
 {
 
     /**
+     * Remove a group
+     *
      * @Route("/admin/group/remove/{id}", name="groupRemove")
      */
     public function adminGroupRemoveAction(Request $request, $id)
     {
+
+        //TODO It's gonna be change because actually we cannot get more than one group
+        //TODO some group should not be removed (user, admin, etc);
 
         $repository = $this->getDoctrine()->getRepository(Groupe::class);
 
@@ -46,10 +51,16 @@ class AdminController extends Controller
 
 
     /**
+     * Show the group list, and handle the addition of group
+     *
      * @Route("/admin/group", name="group")
      */
     public function adminGroupAction(Request $request)
     {
+
+
+        //TODO It's gonna be change because actually we cannot get more than one group
+
         $doctrine = $this->getDoctrine();
         $repository = $doctrine->getRepository(Groupe::class);
 

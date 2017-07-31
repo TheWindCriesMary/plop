@@ -25,4 +25,13 @@ class CCPConfig
     public static $verifyURL = 'https://login.eveonline.com/oauth/verify';
 
     public static $tokenURL = 'https://login.eveonline.com/oauth/token';
+
+    public static $scopes = 'characterFittingsRead+characterFittingsWrite+characterContactsRead+characterContactsWrite+characterLocationRead+characterNavigationWrite+characterWalletRead+characterAssetsRead+characterIndustryJobsRead+characterKillsRead+characterMailRead+characterMarketOrdersRead+characterNotificationsRead+characterResearchRead+characterSkillsRead+characterContractsRead+characterBookmarksRead+characterClonesRead';
+
+    public static $clientIDAPI =  "09fd589c61b74ee98b0e6c4604f6ebd4";
+
+    public static $secretKEYAPI =  "OTjjCVRyZAcQZarQTi7uyr25tUhIfyyvN0LAYBIL";
+
+    public static $redirectUrlAPI =  "http://localhost/app_dev.php/profile/ccpcallback";
+
 }

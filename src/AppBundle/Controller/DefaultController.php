@@ -5,10 +5,8 @@ namespace AppBundle\Controller;
 use AppBundle\CCP\CCPUtil;
 use AppBundle\Util\Core;
 use AppBundle\Util\UserUtil;
-use nullx27\ESI\Api\CharacterApi;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
-use AppBundle\Entity\LoginCcpCallBack;
 use AppBundle\CCP\CCPConfig;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,6 +18,8 @@ class DefaultController extends Controller
 
 
     /**
+     * This route manage the redirection after login on ccp server, create the session and user
+     *
      * @Route("/ccpcallback", name="ccpCallBack")
      */
     public function ccpCallBackAction(Request $request)
@@ -28,9 +28,8 @@ class DefaultController extends Controller
 
         $userAgent = 'PLAP';
 
-        $url = 'https://login.eveonline.com/oauth/token';
-        $verify_url = 'https://login.eveonline.com/oauth/verify';
 
+        //Getting a token and refresh from ccp with the code-----------------------------------
         $header = 'Authorization: Basic ' . base64_encode(CCPConfig::$clientID . ':' . CCPConfig::$secretKEY);
         $fields_string = '';
         $fields = array(
@@ -42,7 +41,7 @@ class DefaultController extends Controller
         }
         rtrim($fields_string, '&');
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_URL, CCPConfig::$tokenURL);
         curl_setopt($ch, CURLOPT_USERAGENT, $userAgent);
         curl_setopt($ch, CURLOPT_HTTPHEADER, array($header));
         curl_setopt($ch, CURLOPT_POST, count($fields));
@@ -52,21 +51,24 @@ class DefaultController extends Controller
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
         $result = curl_exec($ch);
         if ($result === false) {
-            //TODO erreur management
+            throw $this->createNotFoundException('Error from ccp.');
         }
         curl_close($ch);
 
-
         $response = json_decode($result, true);
         if (isset($response['error'])) {
-            die("\nccpCallBack CCP Error");
+            throw $this->createNotFoundException('Error from ccp. Error message : ' . $response['error']);
         }
         $access_token = $response['access_token'];
         $refresh_token = $response['refresh_token'];
+        //-----------------------------------------------------------------------------------------
+
+
+        //getting the char id from ccp and testing if the token is good----------------------------
         $ch = curl_init();
         // Get the Character details from SSO
         $header = 'Authorization: Bearer ' . $access_token;
-        curl_setopt($ch, CURLOPT_URL, $verify_url);
+        curl_setopt($ch, CURLOPT_URL, CCPConfig::$verifyURL);
         curl_setopt($ch, CURLOPT_USERAGENT, $userAgent);
         curl_setopt($ch, CURLOPT_HTTPHEADER, array($header));
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
@@ -74,21 +76,22 @@ class DefaultController extends Controller
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
         $result = curl_exec($ch);
         if ($result === false) {
-            //TODO erreur management
+            throw $this->createNotFoundException('Error from ccp. (no response)');
         }
         curl_close($ch);
         $response = json_decode($result);
         if (!isset($response->CharacterID)) {
-            //TODO erreur management
+            throw $this->createNotFoundException('Error from ccp. Can\'t get the character id'); //when we don't have the charId, it's probably because it failed
         }
         if (strpos(@$response->Scopes, 'publicData') === false) {
-            //TODO erreur management
+            throw $this->createNotFoundException('Error from ccp. The scopes don\'t match');
         }
 
-
         $charID = (int)$response->CharacterID;
+        //-----------------------------------------------------------------------------------------
 
 
+        //setting up the session
         $session = $request->getSession();
         if (!$session) {
             $session = new Session();
@@ -104,26 +107,22 @@ class DefaultController extends Controller
 
         $doctrine = $this->getDoctrine();
 
+        //creating the user in the database if necessary
         if (UserUtil::userExist($session, $doctrine)) {
-            echo 'user exist <br>';
         }
         else
         {
-            echo 'user not exist <br>';
             UserUtil::addUser($session, $doctrine);
 
         }
 
 
-        /*echo 'token : ' . $access_token . '<br>';
-        echo 'refresh_token : ' . $refresh_token . '<br>';
-        echo 'char_id : ' . $charID . '<br>';*/
-
-        //die('lel');
         return $this->redirect('profile');
     }
 
     /**
+     * this route logout the user
+     *
      * @Route("/logout", name="logout")
      */
     public function logoutAction(Request $request)
@@ -143,6 +142,9 @@ class DefaultController extends Controller
 
 
     /**
+     *
+     * This route is the homepage idiot
+     *
      * @Route("/", name="homepage")
      */
     public function indexAction(Request $request)
@@ -157,43 +159,14 @@ class DefaultController extends Controller
         //
     }
 
-    /**
-     * @Route("/profile", name="profile")
-     */
-    public function profileAction(Request $request)
-    {
-
-        $session = $request->getSession();
-
-        if(!$session)
-            return $this->redirect('index');
-
-        if ($session->get('token')){
-
-            $apiChar = new CharacterApi();
 
 
-            $charInfo = $apiChar->getCharactersCharacterId($session->get('char_id'), CCPConfig::$datasource);
-            echo 'hello ' . $charInfo->getName();
 
-
-            die('<br> the end');
-
-        }
-
-
-        else {
-            return $this->redirect('index');
-        }
-
-
-        // replace this example code with whatever you need
-        /*return $this->render('default/index.html.twig', [
-            'base_dir' => realpath($this->getParameter('kernel.project_dir')).DIRECTORY_SEPARATOR,
-        ]);*/
-    }
 
     /**
+     *
+     * Do your test here.
+     *
      * @Route("/test", name="test")
      */
     public function testAction(Request $request)
@@ -213,7 +186,7 @@ class DefaultController extends Controller
             echo $session->get('char_id'). "<br>" ;
 
             //if(!CCPUtil::isTokenValid($session)) CCPUtil::updateToken($session);
-            CCPUtil::updateToken($session);
+            CCPUtil::updateSessionToken($session);
             die('<br> the end');
 
         }
@@ -228,13 +201,13 @@ class DefaultController extends Controller
 
 
         die('test');
-       /* return $this->render('default/index.html.twig', [
-            'base_dir' => realpath($this->getParameter('kernel.project_dir')).DIRECTORY_SEPARATOR,
-        ]);*/
     }
 
 
     /**
+     *
+     * Basically generate the url to the ccp login page.
+     *
      * @Route("/login", name="login")
      */
     public function loginAction(Request $request)
@@ -251,38 +224,5 @@ class DefaultController extends Controller
         return $this->redirect($url);
 
 
-    }
-
-
-
-
-    /**
-     * @Route("/testDB", name="testDB")
-     */
-    public function testDBAction(Request $request)
-    {
-
-        //random string generator
-        //TODO move it
-        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        $charactersLength = strlen($characters);
-        $randomString = '';
-        for ($i = 0; $i < 128; $i++) {
-            $randomString .= $characters[rand(0, $charactersLength - 1)];
-        }
-        //------
-
-        $loginCCP = new LoginCcpCallBack();
-        $loginCCP->setState($randomString);
-        $loginCCP->setTime(new \DateTime('2017-07-16 14:00:00'));
-        $em = $this->getDoctrine()->getManager();
-        $em->persist($loginCCP);
-        $em->flush();
-
-
-        die('testDB');
-        /*return $this->render('default/index.html.twig', [
-            'base_dir' => realpath($this->getParameter('kernel.project_dir')).DIRECTORY_SEPARATOR,
-        ]);*/
     }
 }

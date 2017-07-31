@@ -26,9 +26,8 @@ class Core
         $parameters = array();
 
         if(UserUtil::isConnected($request)){
-            $rep = $doctrine->getRepository(User::class);
 
-            $user = $rep->findOneByCharId($request->getSession()->get('char_id'));
+            $user = UserUtil::getUser($doctrine, $request);
 
 
             $parameters['user'] = $user;

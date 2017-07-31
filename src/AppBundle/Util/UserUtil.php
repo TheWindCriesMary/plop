@@ -22,6 +22,9 @@ class UserUtil
 {
 
 
+
+    private static $user = null;
+
     public static function userExist(SessionInterface $session, Registry $doctrine){
         $repository = $doctrine->getRepository(User::class);
 
@@ -31,6 +34,20 @@ class UserUtil
 
         return false;
 
+
+    }
+
+    /**
+     ** @return User
+     */
+    public static function getUser(Registry $doctrine, Request $request){
+        if(UserUtil::$user!=null)return UserUtil::$user;
+
+        $rep = $doctrine->getRepository(User::class);
+
+        UserUtil::$user = $rep->findOneByCharId($request->getSession()->get('char_id'));
+
+        return UserUtil::$user;
 
     }
 
@@ -79,11 +96,11 @@ class UserUtil
             return false;
         }
 
-        if(CCPUtil::isTokenValid($session)){
+        if(CCPUtil::isSessionTokenValid($session)){
             return true;
         }
         else{
-            if(CCPUtil::updateToken($session)){
+            if(CCPUtil::updateSessionToken($session)){
                 return true;
             }
 

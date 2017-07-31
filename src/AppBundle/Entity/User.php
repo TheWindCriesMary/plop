@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use nullx27\ESI\Models\GetCorporationsCorporationIdOk;
 
@@ -57,7 +58,18 @@ class User
      */
     public $corp;
 
+    /**
+     * @ORM\OneToMany(targetEntity="CharApi", mappedBy="user")
+     */
+    private $apis;
 
+
+
+    public function __construct()
+    {
+
+        $this->apis = new ArrayCollection();
+    }
 
     /**
      * Get id
