@@ -47,11 +47,11 @@ class User
     /**
      * @var int
      *
-     * @ORM\ManyToOne(targetEntity="Groupe", inversedBy="users")
+     * @ORM\ManyToMany(targetEntity="Groupe", inversedBy="users")
      * @ORM\JoinColumn(nullable=false)
      */
 
-    private $groupe;
+    private $groupes;
 
     /**
      * @var GetCorporationsCorporationIdOk
@@ -68,6 +68,7 @@ class User
     public function __construct()
     {
 
+        $this->groupes = new  ArrayCollection();
         $this->apis = new ArrayCollection();
     }
 
@@ -157,14 +158,32 @@ class User
      * Set groupe
      *
      * @param integer $groupe
-     *
      * @return User
      */
-    public function setGroupe($groupe)
+    public function setGroupes($groupes)
     {
-        $this->groupe = $groupe;
+        $this->groupes = $groupes;
 
         return $this;
+    }
+
+    /**
+     * @param $groupes
+     * @return User
+     */
+    public function setGroupe($groupes)
+    {
+        return $this->setGroupes($groupes);
+    }
+
+    /**
+     * Get groupe
+     *
+     * @return integer
+     */
+    public function getGroupes()
+    {
+        return $this->groupes;
     }
 
     /**
@@ -174,7 +193,7 @@ class User
      */
     public function getGroupe()
     {
-        return $this->groupe;
+        return $this->getGroupes();
     }
 
     public function __toString() {

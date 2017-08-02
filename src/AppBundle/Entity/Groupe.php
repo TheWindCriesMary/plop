@@ -30,7 +30,7 @@ class Groupe
     private $name;
 
     /**
-     * @ORM\OneToMany(targetEntity="User", mappedBy="groupe")
+     * @ORM\ManyToMany(targetEntity="User", mappedBy="groupes")
      */
     private $users;
 

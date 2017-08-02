@@ -5,13 +5,13 @@
 
 {% block body %}
 
-<table>
+<table border="1">
     <tr> <td> Nom </td> <td> Groupe </td> <td> Corporation </td> </tr>
     {% for member in members %}
     <tr>
         <td><a href="{{ path('member', { 'id' : member.getId() } ) }}"> {{ member.getName()}} </a>  </td>
 
-        <td>{{member.getGroupe().getName()}}  </td>
+        <td> TODO </td>
 
         <td>{{ member.corp.getCorporationName()}}  </td>
 

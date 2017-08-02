@@ -115,9 +115,11 @@ class AdminController extends Controller
 
         $userForm = new User();
         $groupForm = $this->createFormBuilder($userForm)
-            ->add('Groupe', EntityType::class, array(
+            ->add('groupes', EntityType::class, array(
                 'class' => 'AppBundle:Groupe',
+                'expanded'  => true,
                 'choice_label' => 'name',
+                'multiple' => true
             ))
             ->add('save', SubmitType::class, array('label' => 'Changer groupe'))
             ->getForm();
