@@ -26,7 +26,7 @@ class CCPConfig
 
     public static $tokenURL = 'https://login.eveonline.com/oauth/token';
 
-    public static $scopes = 'characterFittingsRead+characterFittingsWrite+characterContactsRead+characterContactsWrite+characterLocationRead+characterNavigationWrite+characterWalletRead+characterAssetsRead+characterIndustryJobsRead+characterKillsRead+characterMailRead+characterMarketOrdersRead+characterNotificationsRead+characterResearchRead+characterSkillsRead+characterContractsRead+characterBookmarksRead+characterClonesRead';
+    public static $scopes = 'characterFittingsRead+characterFittingsWrite+characterContactsRead+characterContactsWrite+characterLocationRead+characterNavigationWrite+characterWalletRead+characterAssetsRead+characterIndustryJobsRead+characterKillsRead+characterMailRead+characterMarketOrdersRead+characterNotificationsRead+characterResearchRead+characterSkillsRead+characterContractsRead+characterBookmarksRead+characterClonesRead+esi-markets.read_character_orders.v1';
 
     public static $clientIDAPI =  "09fd589c61b74ee98b0e6c4604f6ebd4";
 

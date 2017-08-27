@@ -15,6 +15,8 @@ use AppBundle\Entity\CharApi;
 use AppBundle\Entity\User;
 use AppBundle\Util\UserUtil;
 use nullx27\ESI\Api\CharacterApi;
+use nullx27\ESI\Api\MarketApi;
+use nullx27\ESI\Models\GetCharactersCharacterIdOrders200Ok;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use AppBundle\CCP\CCPConfig;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -236,6 +238,46 @@ class UserController extends Controller
         $em->flush();
 
         return $this->redirect('/profile/api');
+
+
+    }
+
+    /**
+     * Remove an api
+     *
+     * @Route("/profile/order", name="myorder")
+     */
+    public function myOrderAction(Request $request)
+    {
+
+        $user = UserUtil::getUser($this->getDoctrine(), $request);
+        if(!$user) return $this->redirect('/');
+
+        $parameters = Core::getDefaultParameter($this->getDoctrine(), $request);
+        $parameters['base_dir'] = realpath($this->getParameter('kernel.project_dir')).DIRECTORY_SEPARATOR;
+
+
+        $apis = $user->getApis();
+
+        $eveApi = new MarketApi();
+
+        $orders = array();
+        /**
+         * @var $api CharApi
+         */
+        foreach ($apis as $api){
+            $orders = array_merge($orders, $eveApi->getCharactersCharacterIdOrders($api->getCharId(), CCPConfig::$datasource, $api->getToken()));
+        }
+
+        /**
+         * @var $order GetCharactersCharacterIdOrders200Ok
+         */
+        foreach ($orders as $order){
+            echo 'Type : ' . $order->getTypeId() . ', price : ' . $order->getPrice();
+        }
+
+
+
 
 
     }

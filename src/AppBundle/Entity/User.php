@@ -199,4 +199,62 @@ class User
     public function __toString() {
         return $this->id.'';
     }
+
+    /**
+     * Add groupe
+     *
+     * @param \AppBundle\Entity\Groupe $groupe
+     *
+     * @return User
+     */
+    public function addGroupe(\AppBundle\Entity\Groupe $groupe)
+    {
+        $this->groupes[] = $groupe;
+
+        return $this;
+    }
+
+    /**
+     * Remove groupe
+     *
+     * @param \AppBundle\Entity\Groupe $groupe
+     */
+    public function removeGroupe(\AppBundle\Entity\Groupe $groupe)
+    {
+        $this->groupes->removeElement($groupe);
+    }
+
+    /**
+     * Add api
+     *
+     * @param \AppBundle\Entity\CharApi $api
+     *
+     * @return User
+     */
+    public function addApi(\AppBundle\Entity\CharApi $api)
+    {
+        $this->apis[] = $api;
+
+        return $this;
+    }
+
+    /**
+     * Remove api
+     *
+     * @param \AppBundle\Entity\CharApi $api
+     */
+    public function removeApi(\AppBundle\Entity\CharApi $api)
+    {
+        $this->apis->removeElement($api);
+    }
+
+    /**
+     * Get apis
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getApis()
+    {
+        return $this->apis;
+    }
 }
